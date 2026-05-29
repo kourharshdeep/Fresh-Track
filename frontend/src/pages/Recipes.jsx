@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ChefHat } from 'lucide-react';
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = 'https://kourharshdeep-fresh-track-backend.hf.space';
 
 function Recipes() {
   const [recipes, setRecipes] = useState([]);
