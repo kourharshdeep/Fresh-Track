@@ -2,8 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { UploadCloud, CheckCircle, Camera, Image as ImageIcon, Video, Square, AlertTriangle } from 'lucide-react';
 
-const API_BASE = 'http://localhost:8000';
-const WS_BASE = 'ws://localhost:8000';
+const API_BASE = 'https://kourharshdeep-fresh-track-backend.hf.space';
+const WS_BASE = 'wss://kourharshdeep-fresh-track-backend.hf.space';
 
 function Home() {
   const [mode, setMode] = useState('upload'); // 'upload' or 'camera'
