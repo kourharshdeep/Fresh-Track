@@ -4,9 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
 import datetime
-from bson import ObjectId
-
-from database import food_items_collection, feedback_collection
+from database import load_items, save_items
 from detection import process_image
 from expiry import predict_expiry, STORAGE_LOC_MAP, CLIMATE_ZONE_MAP, train_model
 from recipes import suggest_recipes
@@ -188,17 +186,28 @@ async def add_to_inventory(item: InventoryItem):
             "expired_on_entry": expired_on_entry
         }
         
-        result = food_items_collection.insert_one(doc)
-        
-        return {
-            "item_id": str(result.inserted_id),
-            "effective_start_date": effective_start_date.isoformat(),
-            "adjusted_shelf_life": float(adjusted_shelf_life),
-            "predicted_expiry_date": predicted_expiry_date.isoformat(),
-            "remaining_days": remaining_days,
-            "status": status,
-            "warning": warning
-        }
+        items = load_items()
+
+doc["id"] = len(items) + 1
+
+# convert datetime objects to string before saving JSON
+doc["date_added"] = now.isoformat()
+doc["effective_start_date"] = effective_start_date.isoformat()
+doc["predicted_expiry_date"] = predicted_expiry_date.isoformat()
+
+items.append(doc)
+
+save_items(items)
+
+return {
+    "item_id": str(doc["id"]),
+    "effective_start_date": effective_start_date.isoformat(),
+    "adjusted_shelf_life": float(adjusted_shelf_life),
+    "predicted_expiry_date": predicted_expiry_date.isoformat(),
+    "remaining_days": remaining_days,
+    "status": status,
+    "warning": warning
+}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
