@@ -186,28 +186,28 @@ async def add_to_inventory(item: InventoryItem):
             "expired_on_entry": expired_on_entry
         }
         
-        items = load_items()
+                items = load_items()
 
-doc["id"] = len(items) + 1
+        doc["id"] = len(items) + 1
 
-# convert datetime objects to string before saving JSON
-doc["date_added"] = now.isoformat()
-doc["effective_start_date"] = effective_start_date.isoformat()
-doc["predicted_expiry_date"] = predicted_expiry_date.isoformat()
+        # convert datetime objects to strings
+        doc["date_added"] = now.isoformat()
+        doc["effective_start_date"] = effective_start_date.isoformat()
+        doc["predicted_expiry_date"] = predicted_expiry_date.isoformat()
 
-items.append(doc)
+        items.append(doc)
 
-save_items(items)
+        save_items(items)
 
-return {
-    "item_id": str(doc["id"]),
-    "effective_start_date": effective_start_date.isoformat(),
-    "adjusted_shelf_life": float(adjusted_shelf_life),
-    "predicted_expiry_date": predicted_expiry_date.isoformat(),
-    "remaining_days": remaining_days,
-    "status": status,
-    "warning": warning
-}
+        return {
+            "item_id": str(doc["id"]),
+            "effective_start_date": effective_start_date.isoformat(),
+            "adjusted_shelf_life": float(adjusted_shelf_life),
+            "predicted_expiry_date": predicted_expiry_date.isoformat(),
+            "remaining_days": remaining_days,
+            "status": status,
+            "warning": warning
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
