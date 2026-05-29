@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { AlertTriangle, Info, Bell, AlertOctagon, Flame } from 'lucide-react';
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = 'https://kourharshdeep-fresh-track-backend.hf.space';
 
 function Alerts() {
   const [alerts, setAlerts] = useState([]);
