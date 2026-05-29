@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import FoodCard from '../components/FoodCard';
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = 'https://kourharshdeep-fresh-track-backend.hf.space';
 
 function Inventory() {
   const [items, setItems] = useState([]);
