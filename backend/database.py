@@ -1,16 +1,40 @@
+import json
 import os
-from pymongo import MongoClient
-from dotenv import load_dotenv
 
-load_dotenv()
+DB_FILE = "inventory.json"
 
-MONGO_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017")
 
-client = MongoClient(MONGO_URI)
-db = client["freshtrack_db"]
+def load_inventory():
+    if not os.path.exists(DB_FILE):
+        return []
 
-# Collections
-users_collection = db["users"]
-food_items_collection = db["food_items"]
-predictions_collection = db["predictions"]
-feedback_collection = db["feedback"]
+    with open(DB_FILE, "r") as file:
+        return json.load(file)
+
+
+def save_inventory(items):
+    with open(DB_FILE, "w") as file:
+        json.dump(items, file)
+
+
+def add_item(item):
+    items = load_inventory()
+    items.append(item)
+    save_inventory(items)
+
+
+def get_items():
+    return load_inventory()
+
+
+def remove_item(item_id):
+    items = load_inventory()
+    items = [item for item in items if item.get("id") != item_id]
+    save_inventory(items)
+
+
+# keep these so other files don't break
+users_collection = []
+food_items_collection = []
+predictions_collection = []
+feedback_collection = []
