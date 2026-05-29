@@ -1,10 +1,11 @@
 import json
 import os
+import uuid
 
 DB_FILE = "inventory.json"
 
 
-def load_inventory():
+def load_items():
     if not os.path.exists(DB_FILE):
         return []
 
@@ -12,29 +13,51 @@ def load_inventory():
         return json.load(file)
 
 
-def save_inventory(items):
+def save_items(items):
     with open(DB_FILE, "w") as file:
-        json.dump(items, file)
+        json.dump(items, file, default=str)
 
 
-def add_item(item):
-    items = load_inventory()
-    items.append(item)
-    save_inventory(items)
+class SimpleCollection:
+    def insert_one(self, doc):
+        items = load_items()
+        doc["_id"] = str(uuid.uuid4())
+        items.append(doc)
+        save_items(items)
+
+        class Result:
+            inserted_id = doc["_id"]
+
+        return Result()
+
+    def find(self):
+        return load_items()
+
+    def find_one(self, query):
+        items = load_items()
+        for item in items:
+            if item.get("_id") == str(query["_id"]):
+                return item
+        return None
+
+    def delete_one(self, query):
+        items = load_items()
+        before = len(items)
+
+        items = [
+            item for item in items
+            if item.get("_id") != str(query["_id"])
+        ]
+
+        save_items(items)
+
+        class Result:
+            deleted_count = before - len(items)
+
+        return Result()
 
 
-def get_items():
-    return load_inventory()
-
-
-def remove_item(item_id):
-    items = load_inventory()
-    items = [item for item in items if item.get("id") != item_id]
-    save_inventory(items)
-
-
-# keep these so other files don't break
-users_collection = []
-food_items_collection = []
-predictions_collection = []
-feedback_collection = []
+food_items_collection = SimpleCollection()
+feedback_collection = SimpleCollection()
+users_collection = SimpleCollection()
+predictions_collection = SimpleCollection()
